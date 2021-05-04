@@ -1,0 +1,605 @@
+openapi: 3.0.0
+info:
+  title: Coupon Service
+  description: Coupon Service manages coupons for the boost console.
+  version: 1.0.0
+paths:
+  /coupons:
+    get:
+      summary: retrieve coupons for userId from token
+      parameters:
+        - $ref: "#/components/parameters/page"
+        - $ref: "#/components/parameters/maxPerPage"
+        - $ref: "#/components/parameters/sort"
+        - $ref: "#/components/parameters/dynamicSearch"
+        - $ref: "#/components/parameters/filter"
+        - $ref: "#/components/parameters/offerId"
+      responses:
+        "200":
+          description: the retrieved coupons
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/couponList"
+        "500":
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+    post:
+      summary: create a coupon
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/couponRequest"
+      responses:
+        "200":
+          description: the created coupon
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/coupon"
+        "500":
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+
+  /coupons-v2:
+    post:
+      summary: Adds a coupon to all the standard fleets for a given booking channel where the coupon exists and throw error if no coupons were added
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/couponRequest"
+      responses:
+        "200":
+          description: the created coupon
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/coupon"
+        "500":
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+
+  /internal/coupons/redemption:
+    post:
+      summary: link a coupon to a booking
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/couponRedemptionRequest"
+      responses:
+        "200":
+          description: the created coupon
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/coupon"
+        "500":
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+  /internal/coupons/unlink:
+    post:
+      summary: unlink a coupon to a booking
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/couponUnlinkRequest"
+      responses:
+        "204":
+          description: the operation was successful
+        "500":
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+
+  /internal/coupons/{id}:
+    get:
+      summary: retrieve a coupon
+      parameters:
+        - $ref: "#/components/parameters/couponIdPath"
+      responses:
+        "200":
+          description: the retrieved coupon
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/coupon"
+        "500":
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+
+  /internal/coupons/:id/link:
+    post:
+      summary: link a coupon to a booking
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/couponLinkRequest"
+      responses:
+        "200":
+          description: the created coupon
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/coupon"
+        "500":
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+
+  /internal/coupons/link/check:
+    post:
+      summary: link a coupon to a booking
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/couponLinkCheckRequest"
+      responses:
+        "200":
+          description: the created coupon
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/coupon"
+        "500":
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+
+components:
+  parameters:
+    couponIdPath:
+      name: id
+      in: path
+      required: true
+      schema:
+        $ref: "#/components/schemas/couponId"
+    dynamicSearch:
+      in: query
+      name: dynamicSearch
+      description: Free text to search campain. Used to match name
+      schema:
+        type: string
+    maxPerPage:
+      name: maxPerPage
+      in: query
+      schema:
+        $ref: "#/components/schemas/maxPerPage"
+    page:
+      name: page
+      in: query
+      required: true
+      schema:
+        $ref: "#/components/schemas/page"
+    sort:
+      in: query
+      name: sort
+      description: The sort fields and directions for the results
+      schema:
+        type: string
+        default: -createdAt
+        enum:
+          - startDate
+          - -startDate
+          - name
+          - -name
+          - createdAt
+          - -createdAt
+          - expirationDate
+          - -expirationDate
+    filter:
+      name: filter
+      in: query
+      schema:
+        type: string
+        description: the filter to request for (no filter = active)
+        enum:
+          - active
+    offerId:
+      name: offerId
+      in: query
+      schema:
+        $ref: "#/components/schemas/offerId"
+
+  schemas:
+    maxPerPage:
+      type: string
+      format: int32
+      pattern: ^(0|[1-9][0-9]*)$
+      description: the limit of element to retrieve
+    page:
+      type: string
+      format: int32
+      pattern: ^(0|[1-9][0-9]*)$
+      description: the page number to retrieve
+    total:
+      type: number
+      description: the total amount of ressource available for the query
+    fleetId:
+      description: the fleet id associated with the voucherify project
+      type: string
+      format: uuid
+    bookingId:
+      description: the booking id associated with the coupon
+      type: string
+      format: uuid
+    bookingChannelId:
+      description: the bookingchannel id associated with the coupon
+      type: string
+      format: uuid
+    userId:
+      description: the user id associated with the coupon
+      type: string
+      example: HXnnS5kwA9NUucK5d8iWnTKuwo22
+    couponId:
+      description: the id of the coupon
+      type: string
+    displayName:
+      type: string
+      description: the name of the coupon unique by fleet
+      minLength: 3
+      maxLength: 15
+      pattern: ^[A-Z0-9]{3,15}$
+    startDate:
+      description: the start date of the resource as ISO Date String
+      type: string
+      format: "date-time"
+    expirationDate:
+      description: the expiration date of the resource as ISO Date String
+      type: string
+      format: "date-time"
+    voucherType:
+      type: string
+      description: the type of the voucher or voucher configuration
+      enum:
+        - DISCOUNT_VOUCHER
+        - GIFT_VOUCHER
+    vouchersGenerationStatus:
+      description: the status of for the vouchers generation after a coupon generation
+      type: string
+      enum:
+        - DONE
+        - ERROR
+        - IN_PROGRESS
+    redemption:
+      type: object
+      properties:
+        quantity:
+          description: the quantity of redemption
+          type: number
+    discountAmount:
+      type: number
+      description: the amount that is discounted with the coupon
+      example: 13.37
+
+    code:
+      type: string
+      description: the name of the coupon unique by fleet
+      minLength: 3
+      maxLength: 25
+
+    codeConfig:
+      type: object
+      description: an object representif the code configuration of the voulcher
+      properties:
+        length:
+          description: the length of the code
+          type: number
+        charset:
+          description: the available charset of the code
+          type: string
+        prefix:
+          description: the prefix of the code
+          type: string
+        postfix:
+          description: the postfix of the code
+          type: string
+        pattern:
+          description: the pattern of the code
+          type: string
+
+    amountDiscount:
+      description: An Object representing the discount for amount discounts
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - AMOUNT
+        value:
+          type: number
+          description: amount in the currency
+      required:
+        - type
+        - value
+
+    percentDiscount:
+      description: An Object representing the discount for percent discounts
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - PERCENT
+        value:
+          type: number
+          minimum: 1
+          maximum: 100
+      required:
+        - type
+        - value
+
+    voucherConfigCouponRequest:
+      type: object
+      properties:
+        discount:
+          oneOf:
+            - $ref: "#/components/schemas/amountDiscount"
+            - $ref: "#/components/schemas/percentDiscount"
+      required:
+        - discount
+
+    couponRequest:
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/code"
+      required:
+        - code
+
+    couponUpdateRequest:
+      type: object
+      properties:
+        startDate:
+          $ref: "#/components/schemas/startDate"
+        expirationDate:
+          $ref: "#/components/schemas/expirationDate"
+      required:
+        - startDate
+
+    voucherConfig:
+      type: object
+      properties:
+        codeConfig:
+          $ref: "#/components/schemas/codeConfig"
+        type:
+          $ref: "#/components/schemas/voucherType"
+        discount:
+          oneOf:
+            - $ref: "#/components/schemas/amountDiscount"
+            - $ref: "#/components/schemas/percentDiscount"
+        redemption:
+          $ref: "#/components/schemas/redemption"
+
+    coupon:
+      type: object
+      properties:
+        fleetId:
+          $ref: "#/components/schemas/fleetId"
+        vouchersGenerationStatus:
+          $ref: "#/components/schemas/vouchersGenerationStatus"
+        displayName:
+          $ref: "#/components/schemas/displayName"
+        active:
+          type: boolean
+        description:
+          type: string
+        metadata:
+          type: object
+        voucherConfig:
+          $ref: "#/components/schemas/voucherConfig"
+        fleetName:
+          type: string
+          description: name of the fleet
+          example: teo
+
+    couponList:
+      type: object
+      properties:
+        maxPerPage:
+          $ref: "#/components/schemas/maxPerPage"
+        total:
+          $ref: "#/components/schemas/total"
+        page:
+          $ref: "#/components/schemas/page"
+        coupons:
+          type: array
+          items:
+            $ref: "#/components/schemas/coupon"
+
+    error:
+      properties:
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                example: "28a6b8fe-b756-438b-91d7-e6f7cb787e39"
+              message:
+                type: string
+                example: "This is a test error"
+              code:
+                type: string
+                example: "VOUCHERIFY-PROXY-00"
+              details:
+                type: string
+                example: "error details"
+            required:
+              - id
+              - message
+              - code
+      required:
+        - errors
+    couponLinkRequest:
+      type: object
+      properties:
+        bookingId:
+          $ref: "#/components/schemas/bookingId"
+        bookingChannelId:
+          $ref: "#/components/schemas/bookingChannelId"
+        userId:
+          $ref: "#/components/schemas/userId"
+      required:
+        - bookingId
+
+    couponRedemptionRequest:
+      type: object
+      properties:
+        couponId:
+          type: string
+          description: the id of the coupon
+        bookingId:
+          $ref: "#/components/schemas/bookingId"
+        bookingChannelId:
+          $ref: "#/components/schemas/bookingChannelId"
+        fleetId:
+          $ref: "#/components/schemas/fleetId"
+        userId:
+          $ref: "#/components/schemas/userId"
+        discountAmount:
+          $ref: "#/components/schemas/discountAmount"
+      required:
+        - couponId
+        - bookingId
+        - bookingChannelId
+        - userId
+
+    couponUnlinkRequest:
+      type: object
+      properties:
+        couponId:
+          type: string
+          description: the id of the coupon
+        bookingChannelId:
+          $ref: "#/components/schemas/bookingChannelId"
+        userId:
+          $ref: "#/components/schemas/userId"
+      required:
+        - couponId
+        - bookingChannelId
+        - userId
+
+    couponLinkCheckRequest:
+      type: object
+      properties:
+        bookingId:
+          $ref: '#/components/schemas/bookingId'
+        userId:
+          $ref: '#/components/schemas/userId'
+        bookingChannelId:
+          $ref: '#/components/schemas/bookingChannelId'
+        couponIds:
+          type: array
+          items:
+            $ref: '#/components/schemas/couponId'
+        pickupTime:
+          type: string
+        bookingType:
+          type: string
+          enum:
+            - ASAP
+            - PREBOOKING
+            - DELIVERY
+        payment:
+          type: object
+          properties:
+            type:
+              type: string
+              enum:
+                - creditCard
+                - applePay
+                - googlePay
+                - applePayGuest
+                - googlePayGuest
+                - cash
+          required:
+            - type
+      required:
+        - payment
+        - bookingType
+        - couponIds
+    offerId:
+      description: the offerId to get the fleetId from
+      type: string
+      example: 2590b362-4937-420a-b810-d90ef0dd010f_1
+
+
+

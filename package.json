@@ -1,0 +1,47 @@
+{
+  "name": "openapi-js-helper",
+  "version": "0.0.2",
+  "description": "Generates JsDoc Typedefs based on OpenAPI specification",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node example/app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tubbert/openapi-js-helper.git"
+  },
+  "keywords": [
+    "openapi",
+    "swagger",
+    "jsdoc"
+  ],
+  "author": "https://github.com/tubbert/openapi-js-helper/graphs/contributors",
+  "homepage": "https://github.com/tubbert/openapi-js-helper",
+  "license": "MIT",
+  "dependencies": {
+    "doctrine": "^2.1.0",
+    "glob": "^7.1.2",
+    "js-yaml": "^3.12.0",
+    "lodash": "^4.17.21",
+    "swagger-parser": "^5.0.0"
+  },
+  "devDependencies": {
+    "@icabbi/eslint-config-base": "^1.1.0",
+    "body-parser": "^1.18.3",
+    "chai": "^4.3.4",
+    "chai-as-promised": "^7.1.1",
+    "chai-http": "^4.3.0",
+    "dirty-chai": "^2.0.1",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-security": "^1.4.0",
+    "express": "^4.16.3",
+    "standard": "^11.0.1",
+    "mocha": "^7.1.2",
+    "nock": "^12.0.3",
+    "sinon": "^9.2.4",
+    "sinon-chai": "^3.6.0"
+  }
+}
