@@ -27,7 +27,6 @@
     "swagger-parser": "^5.0.0"
   },
   "devDependencies": {
-    "@icabbi/eslint-config-base": "^1.1.0",
     "body-parser": "^1.18.3",
     "chai": "^4.3.4",
     "chai-as-promised": "^7.1.1",
